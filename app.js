@@ -6,16 +6,19 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const app = express();
+require('dotenv').config();
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
 
 // MongoDB Connection
-mongoose.connect('mongodb+srv://admin:qwertyuiop@cluster0.wkq5i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
+const PORT = process.env.PORT || 3000;
 const db = mongoose.connection;
+require('dotenv').config();
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
@@ -79,10 +82,11 @@ app.use(express.static('public'));
 
 // Set up session handling
 app.use(session({
-    secret: 'your-secret-key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -256,4 +260,7 @@ app.post('/delete-image/:id', async (req, res) => {
 
 
 // Start the server
-app.listen(3000, () => console.log('Server listening on port 3000'));
+
+
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+
