@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Upload</title>
-    <!-- Link to Bootstrap CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -27,10 +27,9 @@
             color: white;
             width: 100%;
         }
-        #camera {
+        #camera, #capturedImagePreview {
             width: 100%;
             max-width: 500px;
-            height: auto;
             border: 2px solid #007bff;
             border-radius: 8px;
         }
@@ -41,22 +40,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Image Upload App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/gallery">Gallery</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Upload</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-danger nav-link text-white" href="/logout">Logout</a>
-                    </li>
-                </ul>
-            </div>
         </div>
     </nav>
 
@@ -67,12 +50,17 @@
                 <label for="image">Select Image:</label>
                 <input type="file" class="form-control" name="image" id="image" accept="image/*">
             </div>
+
             <div id="camera-container">
                 <label for="camera">Capture with Camera:</label>
                 <video id="camera" autoplay></video>
                 <button type="button" id="capture" class="btn btn-success mt-2">Capture Photo</button>
+                <button type="button" id="switchCamera" class="btn btn-secondary mt-2">Switch Camera</button>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <img id="capturedImagePreview" class="mt-3" style="display: none;" alt="Captured Image">
                 <input type="hidden" name="capturedImage" id="capturedImage">
             </div>
+
             <button type="submit" class="btn btn-custom mt-3">Upload</button>
         </form>
         <a href="/gallery" class="link mt-3 d-block text-center">View Gallery</a>
@@ -83,25 +71,56 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
     <script>
-        // Camera Functionality
         const videoElement = document.getElementById('camera');
         const captureButton = document.getElementById('capture');
+        const switchCameraButton = document.getElementById('switchCamera');
         const capturedImageInput = document.getElementById('capturedImage');
+        const capturedImagePreview = document.getElementById('capturedImagePreview');
+        const canvas = document.getElementById('canvas');
 
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function (stream) {
-                    videoElement.srcObject = stream;
-                });
+        let currentStream = null;
+        let useFrontCamera = true;
+
+        // Function to start the camera stream
+        async function startCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+
+            const constraints = {
+                video: { 
+                    facingMode: useFrontCamera ? 'user' : 'environment'
+                }
+            };
+
+            try {
+                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoElement.srcObject = currentStream;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+            }
         }
 
+        // Switch Camera Functionality
+        switchCameraButton.addEventListener('click', () => {
+            useFrontCamera = !useFrontCamera; // Toggle camera
+            startCamera();
+        });
+
+        // Capture Image Functionality
         captureButton.addEventListener('click', () => {
-            const canvas = document.createElement('canvas');
             canvas.width = videoElement.videoWidth;
             canvas.height = videoElement.videoHeight;
             canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            capturedImageInput.value = canvas.toDataURL('image/png');
+
+            const imageDataUrl = canvas.toDataURL('image/png');
+            capturedImageInput.value = imageDataUrl; // Set hidden input value
+            capturedImagePreview.src = imageDataUrl; // Show preview
+            capturedImagePreview.style.display = 'block';
         });
+
+        // Start the default camera on page load
+        startCamera();
     </script>
 </body>
 </html>
