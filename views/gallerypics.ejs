@@ -35,10 +35,9 @@
         }
     </style>
     <script>
-      document.addEventListener('contextmenu', function(event) {
-    event.preventDefault(); // Disable right-click menu
-});
-
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault(); // Disable right-click menu
+        });
     </script>
 </head>
 <body>
@@ -48,9 +47,10 @@
         <div class="row">
             <% images.forEach(function(image) { %>
                 <div class="col-md-4 col-sm-6 col-xs-12 gallery-item">
-                    <img src="/image/<%= image1.id %>" alt="<%= image1.file_name %>" class="img-fluid" draggable="false">
-                    <p><%= image1.file_name %> (Type: <%= image1.file_type %>)<%= image.created_at %></p>
-                    <p></p>
+                    <img src="/image/<%= image._id %>" alt="<%= image.file_name %>" class="img-fluid" draggable="false">
+                    <p><%= image.file_name %> (Type: <%= image.file_type %>)</p>
+                    <p><b>Uploaded At:</b> <%= image.created_at.toDateString() %></p>
+                    <p><b>Image ID:</b> <%= image._id %></p>
                 </div>
             <% }); %>
         </div>
