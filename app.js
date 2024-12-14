@@ -238,7 +238,7 @@ app.get('/adminak', async (req, res) => {
 app.get('/adminak/pics/s', async (req, res) => {
     try {
         const images = await Photo.find();
-        res.render('gallery', { images });
+        res.render('gallerypics', { images });
     } catch (error) {
         console.error(error);
         res.status(500).send('Failed to load photos');
