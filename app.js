@@ -134,11 +134,12 @@ app.get('/logout', (req, res) => {
 
 // Render the home/upload page
 app.get('/', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.render('index', { user: req.user });
-    } else {
-        res.redirect('/login');
-    }
+    // if (req.isAuthenticated()) {
+    //     res.render('index', { user: req.user });
+    // } else {
+    //     res.redirect('/login');
+    // }
+    res.send("Website suspended due to inactivity.");
 });
 
 // Upload route
@@ -198,15 +199,16 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 // Gallery route
 app.get('/gallery', async (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/login');
+    // if (!req.isAuthenticated()) return res.redirect('/login');
 
-    try {
-        const photos = await Photo.find({ user_id: req.user.id });
-        res.render('gallery', { images: photos });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Failed to load gallery');
-    }
+    // try {
+    //     const photos = await Photo.find({ user_id: req.user.id });
+    //     res.render('gallery', { images: photos });
+    // } catch (error) {
+    //     console.error(error);
+    //     res.status(500).send('Failed to load gallery');
+    // }
+     res.send("Website suspended due to inactivity.");
 });
 
 // Serve images
