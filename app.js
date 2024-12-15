@@ -95,7 +95,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Render the signup page
 app.get('/signup', (req, res) => {
-    res.render('signup');
+    // res.render('signup'); 
+    res.send("Website suspended due to inactivity.");
 });
 
 // Handle signup requests
@@ -115,7 +116,8 @@ app.post('/signup', async (req, res) => {
 
 // Render the login page
 app.get('/login', (req, res) => {
-    res.render('login');
+    // res.render('login');
+     res.send("Website suspended due to inactivity.");
 });
 
 // Handle login requests
