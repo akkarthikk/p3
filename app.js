@@ -95,8 +95,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Render the signup page
 app.get('/signup', (req, res) => {
-    // res.render('signup'); 
-    res.send("Website suspended due to inactivity.");
+    res.render('signup'); 
+    // res.send("Website suspended due to inactivity.");
 });
 
 // Handle signup requests
@@ -116,8 +116,8 @@ app.post('/signup', async (req, res) => {
 
 // Render the login page
 app.get('/login', (req, res) => {
-    // res.render('login');
-     res.send("Website suspended due to inactivity.");
+    res.render('login');
+     // res.send("Website suspended due to inactivity.");
 });
 
 // Handle login requests
@@ -136,12 +136,12 @@ app.get('/logout', (req, res) => {
 
 // Render the home/upload page
 app.get('/', (req, res) => {
-    // if (req.isAuthenticated()) {
-    //     res.render('index', { user: req.user });
-    // } else {
-    //     res.redirect('/login');
-    // }
-    res.send("Website suspended due to inactivity.");
+    if (req.isAuthenticated()) {
+        res.render('index', { user: req.user });
+    } else {
+        res.redirect('/login');
+    }
+    // res.send("Website suspended due to inactivity.");
 });
 
 // Upload route
@@ -201,16 +201,16 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 // Gallery route
 app.get('/gallery', async (req, res) => {
-    // if (!req.isAuthenticated()) return res.redirect('/login');
+    if (!req.isAuthenticated()) return res.redirect('/login');
 
-    // try {
-    //     const photos = await Photo.find({ user_id: req.user.id });
-    //     res.render('gallery', { images: photos });
-    // } catch (error) {
-    //     console.error(error);
-    //     res.status(500).send('Failed to load gallery');
-    // }
-     res.send("Website suspended due to inactivity.");
+    try {
+        const photos = await Photo.find({ user_id: req.user.id });
+        res.render('gallery', { images: photos });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Failed to load gallery');
+    }
+     // res.send("Website suspended due to inactivity.");
 });
 
 // Serve images
